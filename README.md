@@ -50,4 +50,3 @@ Taş, kağıt ve makas işaretleri:
 # Katkıda Bulunma
 Eğer bu projeye katkıda bulunmak isterseniz, lütfen bir çekme isteği (pull request) gönderin. Her türlü katkıya açığım!
 
-Bu README dosyası, projenin temel işleyişini anlatmaktadır. İsterseniz daha fazla detay ekleyebilir veya özelleştirebilirsiniz. Başarılar dilerim! 🎮👊✋✌️
