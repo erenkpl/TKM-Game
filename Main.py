@@ -37,17 +37,20 @@ y16 = 0
 x20 = 0
 y20 = 0
 
+
 # Bu fonksiyonda, her bir parmağın ucundaki noktanın avuç içinin en uç noktasına olan uzaklığının koordinatını alıp,
 # bu noktalardan pisagor yöntemiyle, arasındaki net mesafeyi buluyoruz.
-def fingerCoordinates(x, y, x0, y0):
-    sumx = abs(x) - abs(x0)
-    sumy = abs(y) - abs(y0)
+def finger_coordinates(x, y, xi, yi):
+    sumx = abs(x) - abs(xi)
+    sumy = abs(y) - abs(yi)
     sumofxy = math.sqrt((sumx * sumx) + (sumy * sumy))
     return sumofxy
 
+
 # Bu fonksiyonda, oyuncunun ve bilgisayarın yaptığı hareketleri kontrol ediyoruz, ve bu hareketlere göre kazananı
 # belirleyip, puan ekliyoruz.
-def durumKontrol(durum):
+def durum_kontrol():
+    global winner
     mevcut_hareket = random.choice(hareketler)
     if durum == mevcut_hareket:
         print("ESIT")
@@ -73,7 +76,6 @@ def durumKontrol(durum):
         else:
             print("CPU Wins")
             winner = "CPU"
-    return winner
 
 
 while True:
@@ -89,7 +91,7 @@ while True:
         cv2.putText(img,
                     "Elinizi Kameraya 20-25 cm Mesafede Tutunuz.", (10, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
                     (0, 0, 150), 2)
-        cv2.putText(img,"Baslamak icin tamam isareti yapiniz", (10, 130), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+        cv2.putText(img, "Baslamak icin tamam isareti yapiniz", (10, 130), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
                     (0, 0, 150), 2)
     if sonuc.multi_hand_landmarks:
         for handlms in sonuc.multi_hand_landmarks:  # Görüntüdeki eller içinden,
@@ -122,20 +124,23 @@ while True:
                     y0 = cy
 
                 # Her bir parmak ucunun, avuç içine olan uzaklığını hesaplamak için fonksiyonumuza gönderdik.
-                sumofxy4 = fingerCoordinates(x4, y4, x0, y0)
-                sumofxy8 = fingerCoordinates(x8, y8, x0, y0)
-                sumofxy12 = fingerCoordinates(x12, y12, x0, y0)
-                sumofxy16 = fingerCoordinates(x16, y16, x0, y0)
-                sumofxy20 = fingerCoordinates(x20, y20, x0, y0)
+                sumofxy4 = finger_coordinates(x4, y4, x0, y0)
+                sumofxy8 = finger_coordinates(x8, y8, x0, y0)
+                sumofxy12 = finger_coordinates(x12, y12, x0, y0)
+                sumofxy16 = finger_coordinates(x16, y16, x0, y0)
+                sumofxy20 = finger_coordinates(x20, y20, x0, y0)
 
                 if durum == "":  # Oyuna başlamak için elimizle "Tamam" işareti vermemiz gerekiyor.
-                    if sumofxy4 > 210 and ((sumofxy8 < 170 and sumofxy12 < 170) and (sumofxy16 < 160 and sumofxy20 < 150)):
-                        cv2.putText(img, "TAMAM", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 150), 3)
+                    if sumofxy4 > 210 and ((sumofxy8 < 170 and sumofxy12 < 170) and
+                                           (sumofxy16 < 160 and sumofxy20 < 150)):
+                        cv2.putText(img, "TAMAM", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 3,
+                                    (0, 0, 150), 3)
                         durum = "TAMAM"
                         count = 0
-                        start_time = time.time()  # Hareket için gerekli saniyeyi tanımlamak için başladığımız zamanı aldık.
+                        start_time = time.time()  # Hareket için gerekli saniyeyi tutmak için başladığımız zamanı aldık.
                 else:  # Oyuna başladıktan sonra yaptığımız hareketi parmağın avuç içine uzaklığına göre tanımlıyoruz.
-                    cv2.putText(img, "3 Saniye icinde hareketinizi secin.", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 150), 3)
+                    cv2.putText(img, "3 Saniye icinde hareketinizi secin.", (10, 150), cv2.FONT_HERSHEY_SIMPLEX,
+                                1, (0, 0, 150), 3)
                     if (sumofxy8 > 200 and sumofxy12 > 200) and (sumofxy16 > 180 and sumofxy20 > 150):
                         cv2.putText(img, "KAGIT", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 150), 3)
                         durum = "KAGIT"
@@ -146,10 +151,10 @@ while True:
                         cv2.putText(img, "TAS", (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 150), 3)
                         durum = "TAS"
                     end_time = time.time()  # Gerekli saniyeyi hesaplamak için bitiş süresini alıyoruz.
-                    #  Sürelerin farkı 3 ile 4 saniye arasında olunca turu bitirip kazananı belirliyoruz.
-                    if end_time - start_time > 3 and end_time - start_time < 4:
+                    #  Süre 3 saniyeden fazla olunca turu bitirip kazananı belirliyoruz.
+                    if end_time - start_time > 3:
                         if count == 0:
-                            winner = durumKontrol(durum)
+                            durum_kontrol()
                             count += 1
                             count_oyun += 1
                             durum = ""
